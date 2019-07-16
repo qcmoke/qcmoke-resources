@@ -1,0 +1,42 @@
+upstream ops_load {
+	#可为本地的虚拟主机，也可以为远程的其他vps上的nginx虚拟主机
+	server	198.23.188.200:8081;
+	server  198.23.188.200:8082;
+	server  198.23.188.200:8083;
+	server	144.34.145.10:8084;
+	server	101.132.45.132:80;
+}
+
+server{
+	listen 80;
+	server_name	test.qcmoke.top;
+	index	index.html;	
+
+	location / {
+		proxy_pass	http://ops_load;
+	}
+}
+
+
+
+
+
+
+#本地测试的虚拟主机节点
+server {
+        listen 8081;
+        root /usr/share/nginx/load/node1;
+        index index.html;
+}
+
+server {
+        listen 8082;
+        root /usr/share/nginx/load/node2;
+        index index.html;
+}
+
+server {
+        listen 8083;
+        root /usr/share/nginx/load/node3;
+        index index.html;
+}

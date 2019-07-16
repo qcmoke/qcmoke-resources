@@ -1,0 +1,39 @@
+# 第一个虚拟主机配置
+server{
+	listen	80;
+        server_name	blog.qcmoke.top;	#主机名，一般为一个或多个域名或者ip
+        location / { #控制网站访问路径
+        	root	/usr/share/nginx/blog;
+                index	index.html index.htm;
+        }
+
+	location ~ .*\.(jpg|png|gif)$ {
+		root	/usr/share/nginx/resource/img;
+		gzip	on;	#传输压缩，压缩本身比较耗费服务端性能，但给带宽带来更好的传输。恰当的使用会增强资源的访问效率。
+		gzip_http_version	1.1;
+		gzip_comp_level	2;
+		gzip_types gzip_types text/plain application/json application/x-javascript application/css application/xml application/xml+rss text/javascript application/x-httpd-php image/jpeg image/gif image/png;	#压缩的文件类型，一般按需选择，但这里为了未来方便添加文件类型多选一些。具体配置参考文件/etc/nginx/mime.types
+		expires 1h;	#设置文件在客户端的缓存时间，除非客户清楚缓存或者关闭缓存或者强制访问才会再访问。
+	}
+}
+
+
+# 第二个虚拟主机配置    
+server{
+        listen	80;
+        server_name	cloud.qcmoke.top;
+
+        location / {
+        	root	/usr/share/nginx/cloud;
+                index	index.html index.htm;
+        }
+
+	location /download {
+		root    /usr/share/nginx/resource;#注意：访问http://cloud.qcmoke.top/download/ 等价于访问/usr/share/nginx/resource/download
+		charset utf-8,gbk;	#解决目录或者文件显示中文乱码的问题
+		autoindex on;	#开启站点下载。默认为关闭。
+		autoindex_localtime on;	#显示的⽂文件时间为文件的服务器时间。默认为off，显示的文件时间为GMT时间
+		autoindex_exact_size off;	#默认为on， 显示出文件的确切⼤大小，单位是bytes;修改为off，显示出文件的⼤大概大小，单位是kB或者MB或者GB。
+	}
+}
+
